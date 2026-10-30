@@ -1,0 +1,111 @@
+<!DOCTYPE html><html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Management System</title>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #eef3ff;
+  margin: 0;
+  padding: 20px;
+}
+.container {
+  max-width: 500px;
+  margin: 25px auto;
+  background: white;
+  padding: 22px;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px #ccd3e0;
+}
+h1 { color: #2345a0; text-align: center; }
+p { text-align: center; color: #555; }
+input, button {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 12px;
+  margin: 7px 0;
+  border-radius: 7px;
+  font-size: 16px;
+}
+input { border: 1px solid #bbb; }
+button {
+  background: #2458d3;
+  color: white;
+  border: none;
+  font-weight: bold;
+}
+.student {
+  background: #f0f4ff;
+  padding: 12px;
+  margin-top: 10px;
+  border-radius: 8px;
+  overflow-wrap: anywhere;
+}
+.delete { background: #d93636; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>🎓 Student Manager</h1>
+  <p>Manage student records easily</p>
+  <h3>Add New Student</h3>
+  <input id="name" placeholder="Enter student name">
+  <input id="roll" placeholder="Enter roll number">
+  <input id="course" placeholder="Enter course (e.g. BCA)">
+  <button onclick="addStudent()">Add Student</button>
+  <h3>Student Records</h3>
+  <div id="list">No students added yet.</div>
+</div><script>
+let students = JSON.parse(localStorage.getItem("students") || "[]");
+
+function showStudents() {
+  let list = document.getElementById("list");
+  list.innerHTML = "";
+  if (students.length === 0) {
+    list.textContent = "No students added yet.";
+    return;
+  }
+  students.forEach((s, i) => {
+    let card = document.createElement("div");
+    card.className = "student";
+    let details = document.createElement("p");
+    details.textContent = s.name + " | Roll: " + s.roll + " | " + s.course;
+    let del = document.createElement("button");
+    del.textContent = "Delete";
+    del.className = "delete";
+    del.onclick = () => {
+      students.splice(i, 1);
+      save();
+    };
+    card.append(details, del);
+    list.appendChild(card);
+  });
+}
+
+function addStudent() {
+  let name = document.getElementById("name").value.trim();
+  let roll = document.getElementById("roll").value.trim();
+  let course = document.getElementById("course").value.trim();
+  if (!name || !roll || !course) {
+    alert("Please fill all fields!");
+    return;
+  }
+  if (students.some(s => s.roll === roll)) {
+    alert("This roll number already exists!");
+    return;
+  }
+  students.push({name, roll, course});
+  save();
+  document.getElementById("name").value = "";
+  document.getElementById("roll").value = "";
+  document.getElementById("course").value = "";
+}
+
+function save() {
+  localStorage.setItem("students", JSON.stringify(students));
+  showStudents();
+}
+showStudents();
+</script></body>
+</html>
